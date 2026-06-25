@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#111111">
+<title>Classic Futbol LBJ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',sans-serif;background:#0a0a0a;color:#f0f0f0;min-height:100vh;overflow-x:hidden}
+.app{max-width:760px;margin:0 auto}
+
+/* HEADER */
+.header{background:linear-gradient(180deg,#1a1a1a,#111);border-bottom:2px solid #c9a84c;padding:16px 14px 12px;text-align:center;position:relative}
+.flags{position:absolute;top:12px;right:12px;display:flex;gap:4px}
+.flag-svg{width:30px;height:20px;border-radius:3px;overflow:hidden;border:1px solid #333;display:block}
+.logo-wrap{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
+.logo-img{width:76px;height:76px;border-radius:50%;border:2px solid #c9a84c;object-fit:cover;flex-shrink:0;box-shadow:0 0 20px rgba(201,168,76,0.25);cursor:pointer;-webkit-user-select:none;user-select:none}
+.brand-info{text-align:left}
+.brand-tagline{font-size:9px;letter-spacing:3px;color:#c9a84c;text-transform:uppercase}
+.brand-name{font-size:23px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:1px}
+.brand-name span{color:#c9a84c}
+.brand-sub{font-size:9px;letter-spacing:1px;color:#aaa;text-transform:uppercase;margin-top:3px}
+.gold-bar{width:50px;height:2px;background:linear-gradient(90deg,transparent,#c9a84c,transparent);margin:8px auto 0}
+.ship-tag{font-size:9px;color:#666;letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+
+/* SOCIAL */
+.social-bar{background:#0d0d0d;border-bottom:1px solid #1e1e1e;padding:9px;display:flex;justify-content:center;gap:7px;flex-wrap:wrap}
+.s-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;text-decoration:none;font-size:11px;font-weight:600;border:1px solid;white-space:nowrap;transition:opacity 0.2s}
+.s-btn:active{opacity:0.7}
+.s-btn.fb{border-color:#1877f2;color:#1877f2;background:rgba(24,119,242,0.08)}
+.s-btn.ig{border-color:#e1306c;color:#e1306c;background:rgba(225,48,108,0.08)}
+.s-btn.tt{border-color:#888;color:#aaa;background:rgba(255,255,255,0.04)}
+
+/* WA FLOTANTE */
+.wa-fixed{position:fixed;bottom:22px;right:18px;z-index:600;background:#25d366;border:none;border-radius:50%;width:58px;height:58px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,211,102,0.5);cursor:pointer;transition:transform 0.2s}
+.wa-fixed:active{transform:scale(0.9)}
+.wa-fixed svg{width:30px;height:30px;fill:#fff}
+
+/* SEARCH */
+.search-bar{padding:10px 12px 8px;background:#0d0d0d;border-bottom:1px solid #1a1a1a;display:flex;gap:8px;align-items:center}
+.search-input{flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:9px 12px;color:#f0f0f0;font-size:14px;outline:none;min-width:0;transition:border-color 0.2s}
+.search-input:focus{border-color:#c9a84c}
+.cart-btn{background:#c9a84c;border:none;border-radius:8px;padding:9px 13px;cursor:pointer;font-size:13px;font-weight:700;color:#000;display:flex;align-items:center;gap:5px;position:relative;white-space:nowrap;flex-shrink:0}
+.cart-btn:active{background:#e0bc60}
+.cart-badge{background:#e24b4b;color:#fff;border-radius:50%;font-size:10px;font-weight:700;width:18px;height:18px;display:flex;align-items:center;justify-content:center;position:absolute;top:-7px;right:-7px}
+
+.filter-wrap{display:flex;gap:6px;padding:8px 12px;background:#0d0d0d;border-bottom:1px solid #1a1a1a;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-wrap::-webkit-scrollbar{display:none}
+.filter-btn{background:none;border:1px solid #2a2a2a;color:#888;font-size:11px;padding:5px 13px;border-radius:14px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.2s}
+.filter-btn.active{border-color:#c9a84c;color:#c9a84c;background:rgba(201,168,76,0.09)}
+
+/* CATALOG */
+.catalog{padding:12px}
+.products-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:480px){.products-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:640px){.products-grid{grid-template-columns:repeat(4,1fr)}}
+
+.card{background:#141414;border:1px solid #222;border-radius:12px;overflow:hidden;transition:border-color 0.2s,transform 0.18s;display:flex;flex-direction:column}
+.card:active{transform:scale(0.975)}
+@media(hover:hover){.card:hover{border-color:#c9a84c;transform:translateY(-2px)}}
+
+.card-img-wrap{width:100%;aspect-ratio:1;background:#1a1a1a;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;display:block}
+.no-img-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.no-img-ico{font-size:42px;opacity:0.1}
+.badge{position:absolute;top:7px;right:7px;background:#c9a84c;color:#000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:1px;z-index:2}
+.badge.out{background:#2a2a2a;color:#555}
+
+.card-body{padding:9px 10px 11px;display:flex;flex-direction:column;flex:1}
+.card-club{font-size:9px;color:#c9a84c;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px}
+.card-name{font-size:12px;color:#eee;font-weight:500;margin-bottom:5px;line-height:1.35;flex:1}
+.card-price{font-size:17px;font-weight:800;color:#c9a84c;margin-bottom:7px}
+.card-price span{font-size:10px;color:#555;font-weight:400;margin-left:2px}
+
+/* TALLAS */
+.tallas-lbl{font-size:9px;color:#777;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.tallas-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.talla-chip{font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px;border:1px solid #2a2a2a;color:#bbb;cursor:pointer;transition:all 0.15s;user-select:none;line-height:1}
+.talla-chip.disp:hover{border-color:#c9a84c;color:#c9a84c}
+.talla-chip.sel{background:#c9a84c;color:#000;border-color:#c9a84c}
+.talla-chip.agot{border-color:#1a1a1a;color:#2e2e2e;text-decoration:line-through;cursor:not-allowed}
+
+.btn-add{width:100%;background:#c9a84c;border:none;border-radius:7px;padding:9px;font-size:11px;font-weight:700;color:#000;cursor:pointer;transition:all 0.2s;margin-top:auto}
+.btn-add:hover{background:#e0bc60}
+.btn-add.added{background:#25d366;color:#fff}
+.btn-add:disabled{background:#1e1e1e;color:#444;cursor:not-allowed}
+.no-results{text-align:center;padding:40px 20px;color:#444;font-size:13px}
+
+/* CARRITO */
+.cart-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:790;display:none}
+.cart-overlay.open{display:block}
+.cart-panel{position:fixed;top:0;right:-110%;width:min(360px,100vw);height:100dvh;height:100vh;background:#111;border-left:2px solid #c9a84c;z-index:800;transition:right 0.3s;display:flex;flex-direction:column}
+.cart-panel.open{right:0}
+.cart-hdr{padding:14px 16px;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.cart-ttl{font-size:14px;font-weight:700;color:#c9a84c;letter-spacing:1px}
+.cart-x{background:none;border:none;color:#666;font-size:22px;cursor:pointer;padding:2px 6px;line-height:1}
+.cart-body{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}
+.cart-empty{text-align:center;color:#444;font-size:13px;margin-top:50px;line-height:2}
+.cart-item{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid #1a1a1a}
+.ci-img{width:54px;height:54px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid #222}
+.ci-ph{width:54px;height:54px;border-radius:7px;flex-shrink:0;border:1px solid #222;background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:20px;color:#333}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:12px;color:#eee;font-weight:500;line-height:1.3}
+.ci-talla{font-size:11px;color:#c9a84c;margin-top:2px;font-weight:600}
+.ci-price{font-size:12px;color:#888;margin-top:2px}
+.qty-row{display:flex;align-items:center;gap:8px;margin-top:7px}
+.qty-btn{background:#222;border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qty-btn:active{background:#c9a84c;color:#000}
+.qty-n{font-size:14px;font-weight:700;min-width:22px;text-align:center}
+.ci-del{background:none;border:none;color:#c0392b;cursor:pointer;font-size:19px;padding:6px;flex-shrink:0}
+.cart-ftr{padding:14px 16px;border-top:1px solid #222;flex-shrink:0;background:#111}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.cart-total-lbl{color:#888;font-size:13px}
+.cart-total-val{color:#c9a84c;font-weight:800;font-size:20px}
+.btn-wa-cart{display:flex;align-items:center;justify-content:center;gap:9px;background:#25d366;color:#fff;border:none;border-radius:25px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%;transition:background 0.2s}
+.btn-wa-cart:hover{background:#20bc5a}
+.btn-wa-cart svg{width:22px;height:22px;fill:#fff;flex-shrink:0}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.96);z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;padding:12px}
+.lightbox.open{display:flex}
+.lb-img-wrap{width:100%;max-width:500px;position:relative}
+.lb-main{width:100%;max-height:50vh;border-radius:10px;object-fit:contain;display:block;border:1px solid #2a2a2a}
+.lb-close{position:fixed;top:12px;right:14px;background:rgba(0,0,0,0.7);border:1px solid #333;color:#fff;font-size:20px;cursor:pointer;padding:6px 13px;border-radius:8px;z-index:10;line-height:1}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);border:none;color:#fff;font-size:28px;padding:7px 12px;cursor:pointer;border-radius:7px}
+.lb-prev{left:0}.lb-next{right:0}
+.lb-info{margin-top:10px;text-align:center;width:100%;max-width:500px}
+.lb-name{font-size:14px;color:#eee;font-weight:600}
+.lb-price{font-size:21px;color:#c9a84c;font-weight:800;margin-top:3px}
+.lb-thumbs{display:flex;gap:8px;margin-top:9px;justify-content:center;overflow-x:auto;padding-bottom:2px}
+.lb-thumb{width:48px;height:48px;border-radius:6px;object-fit:cover;cursor:pointer;border:2px solid transparent;opacity:0.55;transition:all 0.2s;flex-shrink:0}
+.lb-thumb.active{border-color:#c9a84c;opacity:1}
+.lb-tallas{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:11px}
+.lb-talla{font-size:13px;font-weight:700;padding:6px 12px;border-radius:7px;border:1px solid #2a2a2a;color:#bbb;cursor:pointer;transition:all 0.15s}
+.lb-talla.disp:hover{border-color:#c9a84c;color:#c9a84c}
+.lb-talla.sel{background:#c9a84c;color:#000;border-color:#c9a84c}
+.lb-talla.agot{border-color:#1a1a1a;color:#2e2e2e;text-decoration:line-through;cursor:not-allowed}
+.lb-add{margin-top:13px;background:#c9a84c;border:none;border-radius:24px;padding:12px 32px;font-size:14px;font-weight:700;color:#000;cursor:pointer;transition:all 0.2s;display:inline-block}
+.lb-add:hover{background:#e0bc60}
+.lb-add.added{background:#25d366;color:#fff}
+.lb-add:disabled{background:#222;color:#444;cursor:not-allowed}
+
+/* FOOTER */
+.footer{text-align:center;padding:16px 14px 90px;border-top:1px solid #1a1a1a}
+.footer p{font-size:10px;color:#2a2a2a;letter-spacing:2px;text-transform:uppercase}
+.footer span{color:#c9a84c}
+
+/* ADMIN PANEL */
+.admin-wrap{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.97);z-index:999;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.admin-wrap.open{display:flex}
+.admin-inner{max-width:700px;width:100%;margin:0 auto;padding:14px;flex:1}
+.admin-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:12px 14px;background:#141414;border:1px solid #2a2a2a;border-radius:10px}
+.admin-title{font-size:14px;color:#c9a84c;font-weight:700;letter-spacing:1px}
+.btn-cerrar{background:none;border:1px solid #333;color:#888;font-size:11px;padding:6px 12px;border-radius:6px;cursor:pointer}
+.logo-admin-box{background:#141414;border:1px solid #2a2a2a;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.logo-admin-img{width:54px;height:54px;border-radius:50%;border:2px solid #c9a84c;object-fit:cover;flex-shrink:0}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #1a1a1a}
+.sec-label{font-size:11px;color:#c9a84c;letter-spacing:2px;text-transform:uppercase;font-weight:700}
+.btn-add{background:#c9a84c;color:#000;border:none;border-radius:6px;padding:8px 15px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-add:hover{background:#e0bc60}
+.prod-list{display:flex;flex-direction:column;gap:8px;margin-bottom:80px}
+.prod-item{background:#141414;border:1px solid #2a2a2a;border-radius:9px;padding:10px;display:flex;align-items:center;gap:10px}
+.prod-thumb{width:52px;height:52px;border-radius:7px;background:#1a1a1a;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;color:#333;border:1px solid #2a2a2a}
+.prod-thumb img{width:100%;height:100%;object-fit:cover}
+.prod-info{flex:1;min-width:0}
+.prod-name{font-size:12px;color:#eee;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prod-meta{font-size:10px;color:#888;margin-top:3px}
+.sdot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:3px;vertical-align:middle}
+.in-d{background:#25d366}.out-d{background:#e24b4b}
+.prod-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-edit,.btn-del{border:none;border-radius:6px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer}
+.btn-edit{background:rgba(201,168,76,0.12);color:#c9a84c;border:1px solid rgba(201,168,76,0.25)}
+.btn-del{background:rgba(226,75,74,0.1);color:#e24b4b;border:1px solid rgba(226,75,74,0.2)}
+
+/* LOGIN */
+.login-box{background:#141414;border:1px solid #2a2a2a;border-radius:14px;padding:28px;max-width:320px;margin:60px auto;text-align:center}
+.login-ico{font-size:40px;margin-bottom:14px}
+.login-title{font-size:18px;color:#c9a84c;font-weight:700;margin-bottom:4px}
+.login-sub{font-size:12px;color:#666;margin-bottom:20px}
+.login-input{width:100%;background:#0d0d0d;border:1px solid #333;border-radius:8px;padding:11px 14px;color:#f0f0f0;font-size:16px;outline:none;margin-bottom:12px;transition:border-color 0.2s}
+.login-input:focus{border-color:#c9a84c}
+.btn-login{width:100%;background:#c9a84c;color:#000;border:none;border-radius:8px;padding:13px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-login:hover{background:#e0bc60}
+.login-err{color:#e24b4b;font-size:12px;margin-top:8px;display:none;font-weight:600}
+.btn-cancel-login{background:none;border:none;color:#444;font-size:12px;margin-top:10px;cursor:pointer;display:block;width:100%;padding:7px}
+
+/* FB */
+.fb-box{background:#141414;border:1px solid #2a2a2a;border-radius:9px;padding:13px;margin-bottom:14px}
+.fb-title{font-size:10px;color:#c9a84c;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.fb-status{font-size:11px;padding:7px 10px;border-radius:6px;background:#0a0a0a;border:1px solid #1e1e1e;margin-bottom:8px;color:#888}
+.fi-sm{width:100%;background:#0a0a0a;border:1px solid #222;border-radius:6px;padding:8px 10px;color:#f0f0f0;font-size:13px;outline:none;margin-bottom:6px}
+.fi-sm:focus{border-color:#c9a84c}
+.btn-connect{background:#c9a84c;color:#000;border:none;border-radius:6px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;width:100%}
+
+/* MODAL */
+.modal-ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);display:none;align-items:flex-end;justify-content:center;z-index:1100}
+@media(min-width:500px){.modal-ov{align-items:center}}
+.modal-ov.open{display:flex}
+.modal{background:#141414;border:1px solid #c9a84c;border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:440px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+@media(min-width:500px){.modal{border-radius:14px}}
+.modal-title{font-size:16px;color:#c9a84c;font-weight:700;margin-bottom:16px}
+.fg{margin-bottom:12px}
+.flabel{font-size:10px;color:#777;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;display:block}
+.fi,.fs{width:100%;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:7px;padding:10px 12px;color:#f0f0f0;font-size:16px;outline:none;transition:border-color 0.2s}
+.fi:focus,.fs:focus{border-color:#c9a84c}
+.fs option{background:#141414}
+.tallas-admin{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.ta-chip{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ta-chk{display:none}
+.ta-lbl{font-size:11px;font-weight:700;padding:6px 10px;border-radius:6px;border:1px solid #333;color:#777;cursor:pointer;transition:all 0.15s;text-align:center;min-width:42px}
+.ta-chk:checked + .ta-lbl{background:#c9a84c;color:#000;border-color:#c9a84c}
+.ta-sel{width:68px;background:#0a0a0a;border:1px solid #1e1e1e;border-radius:5px;padding:3px 4px;color:#777;font-size:10px;outline:none;text-align:center}
+.ta-chk:checked ~ .ta-sel{color:#f0f0f0;border-color:#333}
+.img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.img-slot{aspect-ratio:1;border:1px dashed #2a2a2a;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;background:#0a0a0a}
+.img-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.img-slot .del-img{position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.78);border:none;color:#e24b4b;border-radius:4px;padding:2px 6px;font-size:11px;cursor:pointer;z-index:2}
+.img-add-ico{font-size:22px;color:#333}
+.img-add-txt{font-size:8px;color:#444;margin-top:2px}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.btn-save{flex:1;background:#c9a84c;color:#000;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer}
+.btn-save:hover{background:#e0bc60}
+.btn-cancel{background:none;border:1px solid #2a2a2a;color:#777;border-radius:8px;padding:13px 16px;font-size:14px;cursor:pointer}
+
+/* CARRUSEL */
+.car-wrap{width:100%;aspect-ratio:1;position:relative;overflow:hidden;background:#1a1a1a}
+.car-wrap img{width:100%;height:100%;object-fit:cover;display:none;cursor:zoom-in}
+.car-wrap img.active{display:block}
+.car-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.55);border:none;color:#fff;font-size:18px;padding:6px 10px;cursor:pointer;border-radius:5px;z-index:5}
+.car-btn.prev{left:3px}.car-btn.next{right:3px}
+.car-dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.car-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.28);cursor:pointer}
+.car-dot.a{background:#c9a84c}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#000;font-size:12px;font-weight:700;padding:8px 18px;border-radius:20px;z-index:700;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+@media(max-width:380px){.brand-name{font-size:19px}.logo-img{width:62px;height:62px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="flags">
+      <svg class="flag-svg" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+        <rect width="30" height="10" fill="#FCD116"/><rect y="10" width="30" height="5" fill="#003893"/><rect y="15" width="30" height="5" fill="#CE1126"/>
+      </svg>
+      <svg class="flag-svg" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+        <rect width="30" height="20" fill="#006847"/><rect x="4" y="4" width="22" height="12" rx="2" fill="#FFD700"/>
+        <text x="15" y="13" text-anchor="middle" font-size="6" fill="#006847" font-weight="bold">CTG</text>
+      </svg>
+    </div>
+    <div class="logo-wrap">
+      <!-- LOGO: tocar 5 veces abre admin -->
+      <img class="logo-img" id="logoImg" src="" alt="Classic Futbol LBJ" onclick="logoTap()">
+      <div class="brand-info">
+        <div class="brand-tagline">Tienda Oficial</div>
+        <div class="brand-name">Classic Futbol <span>LBJ</span></div>
+        <div class="brand-sub">Las mejores camisetas · Mejor calidad</div>
+      </div>
+    </div>
+    <input type="file" id="logoFileInput" accept="image/*" style="display:none" onchange="changeLogo(event)">
+    <div class="gold-bar"></div>
+    <div class="ship-tag">🇨🇴 Envíos a toda Colombia</div>
+  </div>
+
+  <!-- REDES -->
+  <div class="social-bar">
+    <a class="s-btn fb" href="https://www.facebook.com/share/1JdakSY34F/" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Facebook
+    </a>
+    <a class="s-btn ig" href="https://www.instagram.com/classic_futbol_lbj" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram
+    </a>
+    <a class="s-btn tt" href="https://www.tiktok.com/@classicfutbol_lbj" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>TikTok
+    </a>
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="search-bar">
+    <input class="search-input" id="searchInput" type="search" placeholder="🔍 Busca por equipo o camiseta..." oninput="renderFilters();renderCatalog()" autocomplete="off">
+    <button class="cart-btn" onclick="openCart()">
+      🛒 <span id="cartLabel">Carrito</span>
+      <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+    </button>
+  </div>
+  <div class="filter-wrap" id="filterWrap"></div>
+
+  <!-- CATÁLOGO -->
+  <div class="catalog">
+    <div class="products-grid" id="grid"></div>
+    <div class="no-results" id="noResults" style="display:none">😕 No se encontraron camisetas</div>
+  </div>
+
+  <div class="footer"><p>© 2025 <span>Classic Futbol LBJ</span> · Hecho con ❤️ para el fútbol</p></div>
+</div>
+
+<!-- BOTÓN WA FLOTANTE -->
+<button class="wa-fixed" onclick="abrirWA()" title="Escríbenos por WhatsApp Business">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L.057 23.5l5.797-1.522A11.934 11.934 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.882 0-3.638-.5-5.159-1.375l-.369-.219-3.44.904.919-3.352-.241-.386A9.943 9.943 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- CARRITO -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-hdr">
+    <div class="cart-ttl">🛒 Mi Carrito</div>
+    <button class="cart-x" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-ftr" id="cartFtr" style="display:none">
+    <div class="cart-total-row">
+      <span class="cart-total-lbl">Total</span>
+      <span class="cart-total-val" id="cartTotal">$0</span>
+    </div>
+    <button class="btn-wa-cart" id="waCartBtn">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L.057 23.5l5.797-1.522A11.934 11.934 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.882 0-3.638-.5-5.159-1.375l-.369-.219-3.44.904.919-3.352-.241-.386A9.943 9.943 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Enviar pedido por WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <div class="lb-img-wrap">
+    <img class="lb-main" id="lbImg" src="" alt="">
+    <button class="lb-nav lb-prev" id="lbPrev" onclick="lbNav(-1)" style="display:none">&#8249;</button>
+    <button class="lb-nav lb-next" id="lbNext" onclick="lbNav(1)" style="display:none">&#8250;</button>
+  </div>
+  <div class="lb-info">
+    <div class="lb-name" id="lbName"></div>
+    <div class="lb-price" id="lbPrice"></div>
+    <div class="lb-thumbs" id="lbThumbs"></div>
+    <div class="lb-tallas" id="lbTallas"></div>
+    <button class="lb-add" id="lbAddBtn" onclick="addFromLb()" disabled>Selecciona una talla</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-wrap" id="adminWrap">
+  <div class="admin-inner">
+    <!-- LOGIN -->
+    <div id="loginView">
+      <div class="login-box">
+        <div class="login-ico">🔐</div>
+        <div class="login-title">Panel Admin</div>
+        <div class="login-sub">Solo para el administrador</div>
+        <input class="login-input" id="pwdInput" type="password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="btn-login" onclick="doLogin()">Entrar</button>
+        <div class="login-err" id="loginErr">❌ Contraseña incorrecta</div>
+        <button class="btn-cancel-login" onclick="closeAdmin()">Cancelar</button>
+      </div>
+    </div>
+    <!-- DASHBOARD -->
+    <div id="dashView" style="display:none">
+      <div class="admin-top">
+        <div class="admin-title">⚙️ Panel Classic Futbol LBJ</div>
+        <button class="btn-cerrar" onclick="doLogout()">Salir</button>
+      </div>
+      <!-- Firebase -->
+      <div class="fb-box">
+        <div class="fb-title">🔥 Sincronización Firebase (tiempo real)</div>
+        <div class="fb-status" id="fbStatus">⚠️ Sin conectar — solo tú ves los cambios</div>
+        <input class="fi-sm" id="fbUrl" type="url" placeholder="URL Firebase: https://tu-proyecto-default-rtdb.firebaseio.com">
+        <input class="fi-sm" id="fbSec" type="password" placeholder="Secret key (opcional)">
+        <button class="btn-connect" onclick="conectarFB()">🔌 Conectar y sincronizar</button>
+        <p style="font-size:10px;color:#444;margin-top:6px">Al conectar, todos tus clientes verán el catálogo al instante.</p>
+      </div>
+      <!-- Logo -->
+      <div class="logo-admin-box">
+        <img class="logo-admin-img" id="adminLogoThumb" src="" alt="logo">
+        <div>
+          <div style="font-size:10px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px">Foto de perfil</div>
+          <button class="btn-add" onclick="document.getElementById('logoFileInput').click()">📷 Cambiar logo</button>
+        </div>
+      </div>
+      <!-- Productos -->
+      <div class="sec-head">
+        <div class="sec-label">Camisetas (<span id="prodCount">0</span>)</div>
+        <button class="btn-add" onclick="openModal()">+ Agregar</button>
+      </div>
+      <div class="prod-list" id="adminList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modalOv">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Agregar Camiseta</div>
+    <div class="fg"><label class="flabel">Club / Selección</label><input class="fi" id="fClub" placeholder="Ej: Real Madrid, Colombia…"></div>
+    <div class="fg"><label class="flabel">Nombre del producto</label><input class="fi" id="fName" placeholder="Ej: Camiseta Local 2024/25"></div>
+    <div class="fg"><label class="flabel">Precio (COP)</label><input class="fi" id="fPrice" type="number" inputmode="numeric" placeholder="85000"></div>
+    <div class="fg">
+      <label class="flabel">Etiqueta</label>
+      <select class="fs" id="fBadge">
+        <option value="">Sin etiqueta</option><option value="NUEVO">NUEVO</option>
+        <option value="POPULAR">POPULAR</option><option value="LOCAL">LOCAL</option><option value="OFERTA">OFERTA</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="flabel">Estado</label>
+      <select class="fs" id="fStock"><option value="1">Disponible</option><option value="0">Agotado</option></select>
+    </div>
+    <div class="fg">
+      <label class="flabel">Tallas y disponibilidad</label>
+      <div class="tallas-admin" id="tallasAdmin"></div>
+    </div>
+    <div class="fg">
+      <label class="flabel">Imágenes (hasta 4 fotos)</label>
+      <div class="img-grid" id="imgGrid"></div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveProduct()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var PASS='jhan2127', WA='573244253794', TALLAS=['S','M','L','XL','XXL'], LS='cflj_v9';
+var products=JSON.parse(localStorage.getItem(LS)||'null')||[
+  {id:1,club:'Real Madrid',name:'Camiseta Local 2024/25',price:85000,badge:'NUEVO',stock:1,imgs:[],tallas:{S:'disp',M:'disp',L:'disp',XL:'disp',XXL:'agot'}},
+  {id:2,club:'Colombia',name:'Selección Colombia 2024',price:90000,badge:'POPULAR',stock:1,imgs:[],tallas:{S:'disp',M:'disp',L:'disp',XL:'agot',XXL:'agot'}},
+  {id:3,club:'Barcelona',name:'Camiseta Local 2024/25',price:85000,badge:'',stock:1,imgs:[],tallas:{S:'agot',M:'disp',L:'disp',XL:'disp',XXL:'disp'}},
+  {id:4,club:'PSG',name:'Camiseta Local 2024/25',price:85000,badge:'',stock:1,imgs:[],tallas:{S:'disp',M:'disp',L:'disp',XL:'disp',XXL:'disp'}},
+  {id:5,club:'Man. City',name:'Camiseta Local 2024/25',price:85000,badge:'',stock:1,imgs:[],tallas:{S:'disp',M:'agot',L:'disp',XL:'disp',XXL:'agot'}},
+  {id:6,club:'Atlético Nacional',name:'Camiseta Local 2024',price:80000,badge:'LOCAL',stock:1,imgs:[],tallas:{S:'disp',M:'disp',L:'disp',XL:'disp',XXL:'disp'}}
+];
+var cart=[],selT={},editIdx=null,editImgs=[],editSlot=null,lbIdx=null,lbImgIdx=0,lbTalla=null;
+var fbUrl='',fbSec='';
+
+// helpers
+function saveLocal(){localStorage.setItem(LS,JSON.stringify(products));}
+function fmt(n){return new Intl.NumberFormat('es-CO').format(n);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2000);}
+
+// LOGO
+var DEF='data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 100 100%22%3E%3Ccircle cx%3D%2250%22 cy%3D%2250%22 r%3D%2248%22 fill%3D%22%231a1a1a%22 stroke%3D%22%23c9a84c%22 stroke-width%3D%222%22%2F%3E%3Ctext x%3D%2250%22 y%3D%2263%22 text-anchor%3D%22middle%22 font-size%3D%2242%22 fill%3D%22%23c9a84c%22%3E%E2%9A%BD%3C%2Ftext%3E%3C%2Fsvg%3E';
+(function(){var s=localStorage.getItem('cflj_logo')||DEF;document.getElementById('logoImg').src=s;document.getElementById('adminLogoThumb').src=s;})();
+function changeLogo(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){localStorage.setItem('cflj_logo',ev.target.result);document.getElementById('logoImg').src=ev.target.result;document.getElementById('adminLogoThumb').src=ev.target.result;e.target.value='';};r.readAsDataURL(f);}
+
+// LOGO 5 TOQUES → admin
+var logoTaps=0,logoTimer=null;
+function logoTap(){
+  logoTaps++;
+  if(logoTimer)clearTimeout(logoTimer);
+  if(logoTaps>=5){logoTaps=0;document.getElementById('adminWrap').classList.add('open');}
+  else{logoTimer=setTimeout(function(){logoTaps=0;},2000);}
+}
+
+// WA FLOTANTE
+function abrirWA(){window.open('https://wa.me/message/TUZKKZOJFYQ6M1','_blank');}
+
+// FIREBASE
+(function(){var u=localStorage.getItem('cflj_fb_url'),s=localStorage.getItem('cflj_fb_sec');if(u){fbUrl=u;fbSec=s||'';document.getElementById('fbUrl').value=u;document.getElementById('fbSec').value=fbSec;pullFB();}})();
+function authQ(){return fbSec?'?auth='+fbSec:'';}
+async function pushFB(){if(!fbUrl)return;var r=await fetch(fbUrl+'/catalogo.json'+authQ(),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({products:products,updatedAt:Date.now()})});if(!r.ok)throw new Error('HTTP '+r.status);}
+async function pullFB(){if(!fbUrl)return;try{var r=await fetch(fbUrl+'/catalogo.json'+authQ());if(!r.ok)return;var d=await r.json();if(d&&Array.isArray(d.products)){products=d.products;saveLocal();renderFilters();renderCatalog();document.getElementById('fbStatus').innerHTML='✅ <b style="color:#25d366">Conectado</b>';}}catch(e){document.getElementById('fbStatus').textContent='❌ Sin conexión';}}
+async function conectarFB(){fbUrl=document.getElementById('fbUrl').value.trim().replace(/\/$/,'');fbSec=document.getElementById('fbSec').value.trim();if(!fbUrl){alert('Ingresa la URL de Firebase');return;}document.getElementById('fbStatus').textContent='⏳ Conectando…';try{await pushFB();localStorage.setItem('cflj_fb_url',fbUrl);localStorage.setItem('cflj_fb_sec',fbSec);document.getElementById('fbStatus').innerHTML='✅ <b style="color:#25d366">Conectado</b> — todos verán el catálogo al instante';alert('✅ Firebase conectado correctamente.');}catch(e){document.getElementById('fbStatus').textContent='❌ Error: '+e.message;}}
+
+// FILTROS
+window._af='Todos';
+function cats(){var c=products.map(function(p){return p.club;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();return['Todos'].concat(c);}
+function renderFilters(){document.getElementById('filterWrap').innerHTML=cats().map(function(c){return'<button class="filter-btn'+(c===window._af?' active':'')+'" onclick="setFilter('+JSON.stringify(c)+')">'+esc(c)+'</button>';}).join('');}
+function setFilter(c){window._af=c;renderFilters();renderCatalog();}
+
+// CATÁLOGO
+function renderCatalog(){
+  var q=document.getElementById('searchInput').value.toLowerCase();
+  var list=products.filter(function(p){return(!q||p.club.toLowerCase().indexOf(q)>=0||p.name.toLowerCase().indexOf(q)>=0)&&(window._af==='Todos'||p.club===window._af);});
+  var grid=document.getElementById('grid');
+  document.getElementById('noResults').style.display=list.length?'none':'block';
+  if(!list.length){grid.innerHTML='';return;}
+  grid.innerHTML=list.map(function(p){
+    var i=products.indexOf(p),imgs=p.imgs||[],tallas=p.tallas||{},st=selT[p.id]||null;
+    var inCart=cart.find(function(c){return c.id===p.id&&c.talla===st;});
+    var imgH;
+    if(imgs.length>1){
+      var slides=imgs.map(function(im,ii){return'<img src="'+im+'" class="'+(ii===0?'active':'')+'" onclick="openLb('+i+','+ii+')">';}).join('');
+      var dots=imgs.map(function(_,ii){return'<div class="car-dot'+(ii===0?' a':'')+'" onclick="event.stopPropagation();carGo('+i+','+ii+')"></div>';}).join('');
+      imgH='<div class="car-wrap" id="cw_'+i+'">'+slides+'<button class="car-btn prev" onclick="event.stopPropagation();carMov('+i+',-1)">&#8249;</button><button class="car-btn next" onclick="event.stopPropagation();carMov('+i+',1)">&#8250;</button><div class="car-dots">'+dots+'</div></div>';
+    }else if(imgs.length===1){imgH='<div class="card-img-wrap"><img src="'+imgs[0]+'" onclick="openLb('+i+',0)"></div>';}
+    else{imgH='<div class="card-img-wrap"><div class="no-img-wrap"><div class="no-img-ico">⚽</div></div></div>';}
+    var badgeH=p.badge&&p.stock?'<div class="badge">'+esc(p.badge)+'</div>':(!p.stock?'<div class="badge out">AGOTADO</div>':'');
+    var tallH=TALLAS.map(function(t){var e=tallas[t]||'agot';var cls='talla-chip '+(e==='agot'?'agot':(st===t?'sel':'disp'));var cl=e==='agot'?'':'onclick="event.stopPropagation();pickT('+p.id+','+JSON.stringify(t)+')"';return'<span class="'+cls+'" '+cl+'>'+t+'</span>';}).join('');
+    var dis=(!p.stock||!st)?'disabled':'';
+    var btnC='btn-add'+(inCart?' added':'');
+    var btnTxt=!p.stock?'Agotado':(!st?'Elige una talla':inCart?'✓ En carrito':'🛒 Agregar');
+    return'<div class="card">'+imgH+badgeH+'<div class="card-body"><div class="card-club">'+esc(p.club)+'</div><div class="card-name">'+esc(p.name)+'</div><div class="card-price">$'+fmt(p.price)+' <span>COP</span></div><div class="tallas-lbl">Talla</div><div class="tallas-wrap">'+tallH+'</div><button class="'+btnC+'" onclick="addToCart('+i+')" '+dis+'>'+btnTxt+'</button></div></div>';
+  }).join('');
+}
+function pickT(prodId,t){var p=products.find(function(x){return x.id===prodId;});if(!p)return;if((p.tallas||{})[t]==='agot')return;selT[prodId]=t;renderCatalog();}
+
+// CARRUSEL
+function carMov(idx,dir){var p=products[idx];if(!p||!p.imgs||p.imgs.length<2)return;var cw=document.getElementById('cw_'+idx);if(!cw)return;var all=cw.querySelectorAll('img'),dots=cw.querySelectorAll('.car-dot'),cur=0;all.forEach(function(im,i){if(im.classList.contains('active'))cur=i;});all[cur].classList.remove('active');dots[cur].classList.remove('a');cur=(cur+dir+p.imgs.length)%p.imgs.length;all[cur].classList.add('active');dots[cur].classList.add('a');}
+function carGo(idx,to){var cw=document.getElementById('cw_'+idx);if(!cw)return;cw.querySelectorAll('img').forEach(function(im,i){im.classList.toggle('active',i===to);});cw.querySelectorAll('.car-dot').forEach(function(d,i){d.classList.toggle('a',i===to);});}
+
+// LIGHTBOX
+function openLb(pi,ii){lbIdx=pi;lbImgIdx=ii;lbTalla=selT[products[pi]&&products[pi].id]||null;updateLb();document.getElementById('lightbox').classList.add('open');document.body.style.overflow='hidden';}
+function updateLb(){
+  var p=products[lbIdx];if(!p)return;
+  var imgs=p.imgs||[],tallas=p.tallas||{};
+  document.getElementById('lbImg').src=imgs[lbImgIdx]||'';
+  document.getElementById('lbName').textContent=p.club+' — '+p.name;
+  document.getElementById('lbPrice').textContent='$'+fmt(p.price)+' COP';
+  var multi=imgs.length>1;
+  document.getElementById('lbPrev').style.display=multi?'':'none';
+  document.getElementById('lbNext').style.display=multi?'':'none';
+  document.getElementById('lbThumbs').innerHTML=multi?imgs.map(function(im,ii){return'<img src="'+im+'" class="lb-thumb'+(ii===lbImgIdx?' active':'')+'" onclick="lbGoImg('+ii+')">';}).join(''):'';
+  document.getElementById('lbTallas').innerHTML=TALLAS.map(function(t){var e=tallas[t]||'agot';var cls='lb-talla '+(e==='agot'?'agot':(lbTalla===t?'sel':'disp'));var cl=e==='agot'?'':'onclick="lbPickT('+JSON.stringify(t)+')"';return'<span class="'+cls+'" '+cl+'>'+t+'</span>';}).join('');
+  var btn=document.getElementById('lbAddBtn');
+  var inCart=lbTalla&&cart.find(function(c){return c.id===p.id&&c.talla===lbTalla;});
+  if(!lbTalla){btn.textContent='Selecciona una talla';btn.className='lb-add';btn.disabled=true;}
+  else if(inCart){btn.textContent='✓ Ya está en el carrito';btn.className='lb-add added';btn.disabled=false;}
+  else{btn.textContent='🛒 Agregar al carrito';btn.className='lb-add';btn.disabled=false;}
+}
+function lbPickT(t){var p=products[lbIdx];if(!p)return;if((p.tallas||{})[t]==='agot')return;lbTalla=t;selT[p.id]=t;updateLb();}
+function lbNav(d){var p=products[lbIdx];if(!p||!p.imgs||p.imgs.length<2)return;lbImgIdx=(lbImgIdx+d+p.imgs.length)%p.imgs.length;updateLb();}
+function lbGoImg(i){lbImgIdx=i;updateLb();}
+function closeLb(){document.getElementById('lightbox').classList.remove('open');document.body.style.overflow='';}
+function addFromLb(){if(!lbTalla)return;addCartDirect(lbIdx,lbTalla);updateLb();}
+
+// CARRITO
+function addToCart(idx){var p=products[idx];if(!p||!p.stock)return;var t=selT[p.id];if(!t)return;addCartDirect(idx,t);}
+function addCartDirect(idx,talla){
+  var p=products[idx];if(!p)return;
+  var key=p.id+'_'+talla;
+  var ex=cart.find(function(c){return c.key===key;});
+  if(ex)ex.qty++;else cart.push({key:key,id:p.id,name:p.club+' — '+p.name,price:p.price,img:(p.imgs&&p.imgs[0])||'',talla:talla,qty:1});
+  updBadge();renderCatalog();renderCart();
+  toast('✓ Agregado al carrito');
+}
+function removeCart(key){cart=cart.filter(function(c){return c.key!==key;});updBadge();renderCatalog();renderCart();}
+function chgQty(key,d){var it=cart.find(function(c){return c.key===key;});if(!it)return;it.qty=Math.max(1,it.qty+d);updBadge();renderCatalog();renderCart();}
+function updBadge(){var t=cart.reduce(function(s,c){return s+c.qty;},0);var b=document.getElementById('cartBadge');b.textContent=t;b.style.display=t?'flex':'none';document.getElementById('cartLabel').textContent=t?'('+t+')':'Carrito';}
+function renderCart(){
+  var el=document.getElementById('cartBody'),ftr=document.getElementById('cartFtr');
+  if(!cart.length){el.innerHTML='<div class="cart-empty">Tu carrito está vacío 😕<br><br>Agrega camisetas del catálogo</div>';ftr.style.display='none';return;}
+  ftr.style.display='block';
+  el.innerHTML=cart.map(function(it){return'<div class="cart-item">'+(it.img?'<img class="ci-img" src="'+it.img+'" alt="">':'<div class="ci-ph">⚽</div>')+'<div class="ci-info"><div class="ci-name">'+esc(it.name)+'</div><div class="ci-talla">Talla: '+it.talla+'</div><div class="ci-price">$'+fmt(it.price*it.qty)+' COP</div><div class="qty-row"><button class="qty-btn" onclick="chgQty('+JSON.stringify(it.key)+',-1)">−</button><span class="qty-n">'+it.qty+'</span><button class="qty-btn" onclick="chgQty('+JSON.stringify(it.key)+',1)">+</button></div></div><button class="ci-del" onclick="removeCart('+JSON.stringify(it.key)+')">🗑</button></div>';}).join('');
+  var total=cart.reduce(function(s,c){return s+c.price*c.qty;},0);
+  document.getElementById('cartTotal').textContent='$'+fmt(total)+' COP';
+  var lineas=cart.map(function(c){return'• '+c.name+'\n  Talla: '+c.talla+' | Cant: '+c.qty+' | $'+fmt(c.price*c.qty)+' COP';}).join('\n');
+  var msg=encodeURIComponent('🏆 *Nuevo pedido - Classic Futbol LBJ* 👕⚽\n\n'+lineas+'\n\n💰 *Total: $'+fmt(total)+' COP*\n\n¡Gracias!');
+  document.getElementById('waCartBtn').onclick=function(){window.open('https://wa.me/573244253794?text='+msg,'_blank');};
+}
+function openCart(){document.getElementById('cartPanel').classList.add('open');document.getElementById('cartOverlay').classList.add('open');renderCart();}
+function closeCart(){document.getElementById('cartPanel').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
+
+// ADMIN LOGIN
+function doLogin(){
+  if(document.getElementById('pwdInput').value===PASS){
+    document.getElementById('loginView').style.display='none';
+    document.getElementById('dashView').style.display='';
+    renderAdmin();
+  }else{
+    document.getElementById('loginErr').style.display='block';
+    setTimeout(function(){document.getElementById('loginErr').style.display='none';},2500);
+  }
+}
+function doLogout(){document.getElementById('dashView').style.display='none';document.getElementById('loginView').style.display='';document.getElementById('pwdInput').value='';closeAdmin();}
+function closeAdmin(){document.getElementById('adminWrap').classList.remove('open');document.getElementById('pwdInput').value='';document.getElementById('loginErr').style.display='none';}
+
+function renderAdmin(){
+  document.getElementById('prodCount').textContent=products.length;
+  if(fbUrl){document.getElementById('fbUrl').value=fbUrl;document.getElementById('fbSec').value=fbSec;}
+  document.getElementById('adminList').innerHTML=products.map(function(p,i){return'<div class="prod-item"><div class="prod-thumb">'+(p.imgs&&p.imgs[0]?'<img src="'+p.imgs[0]+'" alt="">':'⚽')+'</div><div class="prod-info"><div class="prod-name">'+esc(p.club)+' — '+esc(p.name)+'</div><div class="prod-meta">$'+fmt(p.price)+' &nbsp;<span class="sdot '+(p.stock?'in-d':'out-d')+'"></span>'+(p.stock?'Disponible':'Agotado')+'</div></div><div class="prod-actions"><button class="btn-edit" onclick="openModal('+i+')">Editar</button><button class="btn-del" onclick="delProd('+i+')">✕</button></div></div>';}).join('');
+}
+function buildTallasAdmin(td){
+  document.getElementById('tallasAdmin').innerHTML=TALLAS.map(function(t){var e=td?(td[t]||'disp'):'disp';return'<div class="ta-chip"><input type="checkbox" class="ta-chk" id="tck_'+t+'" '+(e!=='no'?'checked':'')+'><label class="ta-lbl" for="tck_'+t+'">'+t+'</label><select class="ta-sel" id="tsel_'+t+'"><option value="disp"'+(e==='disp'?' selected':'')+'>✅ Disp</option><option value="agot"'+(e==='agot'?' selected':'')+'>❌ Agot</option></select></div>';}).join('');
+}
+function getTallasFrm(){var r={};TALLAS.forEach(function(t){var chk=document.getElementById('tck_'+t),sel=document.getElementById('tsel_'+t);r[t]=(chk&&chk.checked)?(sel?sel.value:'disp'):'agot';});return r;}
+function buildImgGrid(){var h='';for(var i=0;i<4;i++){if(i<editImgs.length)h+='<div class="img-slot" onclick="editSlot='+i+';document.getElementById(\'fileInput\').click()"><img src="'+editImgs[i]+'" alt=""><button class="del-img" onclick="event.stopPropagation();remImg('+i+')">✕</button></div>';else h+='<div class="img-slot" onclick="editSlot='+i+';document.getElementById(\'fileInput\').click()"><div class="img-add-ico">+</div><div class="img-add-txt">Foto</div></div>';}document.getElementById('imgGrid').innerHTML=h;}
+function remImg(i){editImgs.splice(i,1);buildImgGrid();}
+function handleFile(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){if(editSlot!==null&&editSlot<4){if(editSlot<editImgs.length)editImgs[editSlot]=ev.target.result;else editImgs.push(ev.target.result);}else if(editImgs.length<4)editImgs.push(ev.target.result);buildImgGrid();e.target.value='';};r.readAsDataURL(f);}
+function openModal(i){
+  editIdx=(i!==undefined)?i:null;
+  document.getElementById('modalTitle').textContent=(editIdx!==null)?'Editar Camiseta':'Agregar Camiseta';
+  if(editIdx!==null){var p=products[editIdx];document.getElementById('fClub').value=p.club;document.getElementById('fName').value=p.name;document.getElementById('fPrice').value=p.price;document.getElementById('fBadge').value=p.badge||'';document.getElementById('fStock').value=p.stock;editImgs=(p.imgs||[]).slice();buildTallasAdmin(p.tallas||{});}
+  else{['fClub','fName','fPrice'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fBadge').value='';document.getElementById('fStock').value='1';editImgs=[];buildTallasAdmin(null);}
+  buildImgGrid();document.getElementById('modalOv').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOv').classList.remove('open');editImgs=[];editSlot=null;}
+async function saveProduct(){
+  var p={id:editIdx!==null?products[editIdx].id:Date.now(),club:document.getElementById('fClub').value||'Club',name:document.getElementById('fName').value||'Camiseta',price:parseInt(document.getElementById('fPrice').value)||80000,badge:document.getElementById('fBadge').value,stock:parseInt(document.getElementById('fStock').value),imgs:editImgs.slice(),tallas:getTallasFrm()};
+  if(editIdx!==null)products[editIdx]=p;else products.push(p);
+  saveLocal();
+  if(fbUrl){try{await pushFB();document.getElementById('fbStatus').innerHTML='✅ <b style="color:#25d366">Sincronizado</b>';}catch(e){}}
+  closeModal();renderFilters();renderCatalog();renderAdmin();
+}
+async function delProd(i){if(!confirm('¿Eliminar esta camiseta?'))return;products.splice(i,1);saveLocal();if(fbUrl){try{await pushFB();}catch(e){}}renderFilters();renderCatalog();renderAdmin();}
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeLb();closeCart();}});
+renderFilters();renderCatalog();
+</script>
+</body>
+</html>
